@@ -1,11 +1,18 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import Main from './components/Main';
+import MainArea from './pages/MainArea';
+import UserProfileArea from './pages/UserProfileArea';
 
 function App() {
   return (
     <div>
-      <Main />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={ <MainArea /> } />
+          <Route path="/perfilUser" element={ <UserProfileArea /> } />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
