@@ -1,31 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { UsersContext } from '../context/Users';
 import axios from 'axios';
 
 import User from './User';
+import RecentlyProfiles from './RecentlyProfiles';
 
 function SearchBar() {
+  const { setUsers, setUsersRepos }: any = useContext(UsersContext);
   const [recentlyUsers, setRecentlyUsers]: any = useState([]);
+  const [reposApi, setReposApi]: any = useState([]);
   const [foundUser, setFoundUser]: any = useState([]);
   const [userApi, setUserApi]: any = useState([]);
   const [loginProfile, setLoginProfile] = useState('');
   const [notFoundUser, setNotFoundUser] = useState('');
-  
+
   useEffect(() => {
     if (loginProfile !== '' && loginProfile !== ' ') {
       const userSearch = loginProfile.toLowerCase();
 
       axios.get(`https://api.github.com/users/${userSearch}`)
-      .then(response => setUserApi([response.data]))
-      .catch(() => console.log('Perfil não encotrado.'))
+        .then(response => setUserApi([response.data]))
+        .catch(() => console.log('Perfil não encotrado.'));
     }
   }, [loginProfile]);
+
+  useEffect(() => {
+    if (loginProfile !== '' && loginProfile !== ' ') {
+      const userReposSearch = loginProfile.toLowerCase();
+
+      axios.get(`https://api.github.com/users/${userReposSearch}/repos`)
+      .then(response => setReposApi(response))
+      .catch(() => console.log(`Repositorios deste usuário ${userReposSearch} não encontrado.`));
+    }
+  }, [loginProfile]);
+
 
   const handleChange = (event: any) => {
     const { value } = event.target;
     setLoginProfile(value);
   }
 
-   const searchProfiles = (event: any) => {
+  const searchProfiles = (event: any) => {
     event.preventDefault();
 
     const filterUser = userApi.find((data: any) => {
@@ -50,24 +65,35 @@ function SearchBar() {
     }
 
     if (filterUser !== undefined && !filterUserEquals) {
+      const recentlyFind = recentlyUsers.find((user:any) => user.login === filterUser.login);
+
+      setUsers(filterUser);
       setFoundUser([filterUser]);
-      setRecentlyUsers([...recentlyUsers, filterUser]);
+      setUsersRepos(reposApi.data);
+
+      if (!recentlyFind) {
+        setRecentlyUsers([...recentlyUsers, filterUser]);
+      }
+
       setLoginProfile('');
     }
   }
 
-  return ( 
+  return (
     <div>
       <form>
         <input
-          onChange={ handleChange }
+          onChange={handleChange}
           type="text" placeholder="Digite um nome de usuario"
-          value={ loginProfile }
+          value={loginProfile}
         />
-        <button onClick={ searchProfiles }>Pesquisar</button>
+        <button onClick={searchProfiles}>Pesquisar</button>
       </form>
-      <h3>{ notFoundUser }</h3>
-      <User datasUsers={ foundUser } />
+      <h3>{notFoundUser}</h3>
+      <User datasUsers={foundUser} />
+      <section>
+        <RecentlyProfiles datasUsersRecently={recentlyUsers} />
+      </section>
     </div>
   );
 }
