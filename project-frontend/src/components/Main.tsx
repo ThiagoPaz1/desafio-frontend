@@ -1,13 +1,16 @@
 import React from 'react';
 
 import SearchBar from './SearchBar';
+import { MainStyle } from './styles';
 
 function Main() {
   return (
-    <main>
-      <h1>Encontre o seu, ou outros vários perfis do github!</h1>
-      <SearchBar />
-    </main>
+    <MainStyle>
+      <main>
+        <h1>Encontre o seu perfil ou outros vários perfis do github!</h1>
+        <SearchBar />
+      </main>
+    </MainStyle>
   );
 }
 
