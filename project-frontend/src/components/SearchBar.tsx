@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import User from './User';
 import RecentlyProfiles from './RecentlyProfiles';
+import { SearchBarStyle } from './styles';
 
 function SearchBar() {
   const { setUsers, setUsersRepos }: any = useContext(UsersContext);
@@ -29,8 +30,8 @@ function SearchBar() {
       const userReposSearch = loginProfile.toLowerCase();
 
       axios.get(`https://api.github.com/users/${userReposSearch}/repos`)
-      .then(response => setReposApi(response))
-      .catch(() => console.log(`Repositorios deste usuário ${userReposSearch} não encontrado.`));
+        .then(response => setReposApi(response))
+        .catch(() => console.log(`Repositorios deste usuário ${userReposSearch} não encontrado.`));
     }
   }, [loginProfile]);
 
@@ -65,7 +66,7 @@ function SearchBar() {
     }
 
     if (filterUser !== undefined && !filterUserEquals) {
-      const recentlyFind = recentlyUsers.find((user:any) => user.login === filterUser.login);
+      const recentlyFind = recentlyUsers.find((user: any) => user.login === filterUser.login);
 
       setUsers(filterUser);
       setFoundUser([filterUser]);
@@ -80,21 +81,23 @@ function SearchBar() {
   }
 
   return (
-    <div>
-      <form>
-        <input
-          onChange={handleChange}
-          type="text" placeholder="Digite um nome de usuario"
-          value={loginProfile}
-        />
-        <button onClick={searchProfiles}>Pesquisar</button>
-      </form>
-      <h3>{notFoundUser}</h3>
-      <User datasUsers={foundUser} />
-      <section>
-        <RecentlyProfiles datasUsersRecently={recentlyUsers} />
-      </section>
-    </div>
+    <SearchBarStyle>
+      <div>
+        <form>
+          <input
+            onChange={handleChange}
+            type="text" placeholder="Digite um nome de usuário"
+            value={loginProfile}
+          />
+          <button style={{marginLeft: "10px"}} onClick={searchProfiles}>Pesquisar</button>
+        </form>
+        <h3>{notFoundUser}</h3>
+        <User datasUsers={foundUser} />
+        <section>
+          <RecentlyProfiles datasUsersRecently={recentlyUsers} />
+        </section>
+      </div>
+    </SearchBarStyle>
   );
 }
 
